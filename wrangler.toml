@@ -1,0 +1,24 @@
+# This is the configuration file for the Wrangler CLI.
+# It defines the worker and the pages project settings.
+
+# Name of your worker.
+name = "watch-api"
+# The entry point for your worker.
+main = "src/worker.js"
+
+# Compatibility date is required. It ensures your worker runs on a stable version of the Workers runtime.
+compatibility_date = "2023-10-30"
+
+# Configuration for the Cloudflare Pages project.
+[pages]
+# The directory of static assets to upload.
+upload_dir = "public"
+
+# This binding allows your Worker to access the D1 database.
+# The `binding` name must match the variable name used in your worker code (env.DB).
+[[d1_databases]]
+binding = "DB"
+database_name = "lost-and-found-db"
+# IMPORTANT: Replace this with the ID you get after running `wrangler d1 create lost-and-found-db`
+database_id = ""
+

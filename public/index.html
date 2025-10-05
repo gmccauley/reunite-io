@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost & Found Apple Watch Registry</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .form-container {
+            transition: all 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-6xl">
+
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-bold text-blue-600 dark:text-blue-500">Lost & Found Apple Watch</h1>
+            <p class="mt-2 text-lg text-gray-600 dark:text-gray-400">Connecting lost watches with their owners.</p>
+        </header>
+
+        <!-- Status Message Display -->
+        <div id="status-message" class="hidden p-4 rounded-lg mb-8 text-center text-white font-medium"></div>
+
+        <main class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <!-- I Found a Watch Form -->
+            <div class="form-container bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+                <h2 class="text-3xl font-semibold mb-6 text-gray-900 dark:text-white">I Found a Watch</h2>
+                <form id="found-form" class="space-y-4">
+                    <div>
+                        <label for="found-serial" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Serial Number*</label>
+                        <input type="text" id="found-serial" name="serial_number" class="mt-1 block w-full bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required placeholder="Located on the back of the watch">
+                    </div>
+                    <div>
+                        <label for="found-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Your Email Address*</label>
+                        <input type="email" id="found-email" name="finder_email" class="mt-1 block w-full bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required placeholder="So the owner can contact you">
+                    </div>
+                     <div>
+                        <label for="found-model" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Model (e.g., Series 9, Ultra 2)</label>
+                        <input type="text" id="found-model" name="model" class="mt-1 block w-full bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label for="found-location" class="block text-sm font-medium text-gray-700 dark:text-gray-300">City / General Area Found</label>
+                        <input type="text" id="found-location" name="location_found" class="mt-1 block w-full bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label for="found-description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description (Color, Band, etc.)</label>
+                        <textarea id="found-description" name="description" rows="3" class="mt-1 block w-full bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., Starlight Aluminum, 45mm, blue sport loop"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300">
+                        Submit Found Watch
+                    </button>
+                </form>
+            </div>
+
+            <!-- I Lost a Watch Form -->
+            <div class="form-container bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+                <h2 class="text-3xl font-semibold mb-6 text-gray-900 dark:text-white">I Lost My Watch</h2>
+                <form id="lost-form" class="space-y-4">
+                     <div>
+                        <label for="lost-serial" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Serial Number*</label>
+                        <input type="text" id="lost-serial" name="serial_number" class="mt-1 block w-full bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required placeholder="Check your Apple ID device list">
+                    </div>
+                    <div>
+                        <label for="lost-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Your Email Address*</label>
+                        <input type="email" id="lost-email" name="loser_email" class="mt-1 block w-full bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required placeholder="To receive match notifications">
+                    </div>
+                    <div class="pt-24"> <!-- Spacer to align buttons -->
+                         <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-300">
+                            Check for a Match
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // The URL for the Cloudflare Worker. This is configured during deployment.
+        // It points to /api/ which is proxied to our worker by Cloudflare Pages.
+        const API_BASE_URL = '/api';
+
+        const foundForm = document.getElementById('found-form');
+        const lostForm = document.getElementById('lost-form');
+        const statusMessage = document.getElementById('status-message');
+
+        function showStatus(message, isError = false) {
+            statusMessage.textContent = message;
+            statusMessage.classList.remove('hidden', 'bg-green-500', 'bg-red-500', 'bg-blue-500');
+            if (isError) {
+                statusMessage.classList.add('bg-red-500');
+            } else if (message.includes("MATCH FOUND!")){
+                 statusMessage.classList.add('bg-green-500');
+            } else {
+                statusMessage.classList.add('bg-blue-500');
+            }
+            window.scrollTo(0, 0);
+            setTimeout(() => {
+                statusMessage.classList.add('hidden');
+            }, 8000);
+        }
+
+        foundForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(foundForm);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/found`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    showStatus('Thank you! Your found watch report has been submitted.');
+                    foundForm.reset();
+                } else {
+                    throw new Error(result.error || 'Failed to submit report.');
+                }
+            } catch (error) {
+                showStatus(`Error: ${error.message}`, true);
+            }
+        });
+
+        lostForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(lostForm);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/lost`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    if (result.match) {
+                        showStatus(`MATCH FOUND! The finder's contact email is: ${result.data.finder_email}. Please reach out to them to arrange the return. They have also been provided with your email.`);
+                    } else {
+                        showStatus('No match found at this time. New watches are added daily, so please check back later.');
+                    }
+                    lostForm.reset();
+                } else {
+                    throw new Error(result.error || 'Failed to check for a match.');
+                }
+            } catch (error) {
+                showStatus(`Error: ${error.message}`, true);
+            }
+        });
+    </script>
+</body>
+</html>
+
