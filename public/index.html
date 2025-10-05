@@ -10,6 +10,9 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         .modal { transition: opacity 0.25s ease; }
+        /* Ensure leaflet controls are visible inside modals */
+        .leaflet-pane { z-index: 500 !important; }
+        .leaflet-top, .leaflet-bottom { z-index: 1000 !important; }
     </style>
 </head>
 <body class="h-full">
@@ -20,7 +23,7 @@
                 <div class="flex h-16 justify-between">
                     <div class="flex">
                         <div class="flex flex-shrink-0 items-center">
-                            <svg class="h-8 w-auto text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <svg class="h-8 w-auto text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 L 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.792V5.25A2.25 2.25 0 0018.75 3h-13.5A2.25 2.25 0 003 5.25v13.5A2.25 2.25 0 005.25 21h7.5M12 18.75a.75.75 0 000-1.5.75.75 0 000 1.5zM12 12.75a.75.75 0 000-1.5.75.75 0 000 1.5zM12 6.75a.75.75 0 000-1.5.75.75 0 000 1.5zM16.5 13.5a3 3 0 116 0 3 3 0 01-6 0zM21 15.75a.75.75 0 00-1.5 0v.01a.75.75 0 001.5 0v-.01z" />
                             </svg>
                             <span class="ml-2 text-xl font-bold text-gray-800">Reunite.IO</span>
@@ -81,9 +84,9 @@
     <!-- Registration Modal -->
     <div id="registerModal" class="modal fixed inset-0 z-10 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden opacity-0">
         <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-            <h2 class="text-2xl font-bold mb-4">Register an Account</h2>
+            <h2 class="text-2xl font-bold mb-8">Register an Account</h2>
             <form id="registerForm">
-                <div class="mb-4">
+                <div class="mb-6">
                     <label for="reg-email" class="block text-sm font-medium text-gray-700">Email address</label>
                     <input type="email" id="reg-email" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                 </div>
@@ -91,7 +94,7 @@
                     <label for="reg-password" class="block text-sm font-medium text-gray-700">Password</label>
                     <input type="password" id="reg-password" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                 </div>
-                <div class="flex justify-end space-x-2">
+                <div class="flex justify-end space-x-2 mt-8">
                     <button type="button" class="modal-close-btn rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">Cancel</button>
                     <button type="submit" class="rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">Register</button>
                 </div>
@@ -102,9 +105,9 @@
     <!-- Login Modal -->
     <div id="loginModal" class="modal fixed inset-0 z-10 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden opacity-0">
         <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-            <h2 class="text-2xl font-bold mb-4">Log In</h2>
+            <h2 class="text-2xl font-bold mb-8">Log In</h2>
             <form id="loginForm">
-                <div class="mb-4">
+                <div class="mb-6">
                     <label for="login-email" class="block text-sm font-medium text-gray-700">Email address</label>
                     <input type="email" id="login-email" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                 </div>
@@ -112,7 +115,7 @@
                     <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
                     <input type="password" id="login-password" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                 </div>
-                <div class="flex justify-end space-x-2">
+                <div class="flex justify-end space-x-2 mt-8">
                     <button type="button" class="modal-close-btn rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">Cancel</button>
                     <button type="submit" class="rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">Log In</button>
                 </div>
@@ -123,13 +126,13 @@
     <!-- Report Lost Modal -->
     <div id="lostModal" class="modal fixed inset-0 z-10 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden opacity-0">
         <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-            <h2 class="text-2xl font-bold mb-4 text-rose-600">Report a Lost Watch</h2>
+            <h2 class="text-2xl font-bold mb-8 text-rose-600">Report a Lost Watch</h2>
             <form id="lostForm">
-                <div class="mb-4">
+                <div class="mb-6">
                     <label for="lost-serial" class="block text-sm font-medium text-gray-700">Serial Number</label>
                     <input type="text" id="lost-serial" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="A1B2C3D4E5F6">
                 </div>
-                <div class="mb-4">
+                <div class="mb-6">
                     <label for="lost-model" class="block text-sm font-medium text-gray-700">Model</label>
                     <select id="lost-model" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                         <option>Series 9</option>
@@ -142,15 +145,16 @@
                         <option>Other</option>
                     </select>
                 </div>
-                <div class="mb-4">
-                    <label for="lost-address" class="block text-sm font-medium text-gray-700">Last Known Address</label>
-                    <input type="text" id="lost-address" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="123 Main St, San Antonio, TX">
-                </div>
                 <div class="mb-6">
                     <label for="lost-date" class="block text-sm font-medium text-gray-700">Date Lost</label>
                     <input type="date" id="lost-date" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                 </div>
-                <div class="flex justify-end space-x-2">
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700">Last Known Location</label>
+                    <p class="text-xs text-gray-500 mb-2">Click on the map below to drop a pin.</p>
+                    <div id="lost-map-picker" class="h-64 w-full rounded-md border border-gray-300"></div>
+                </div>
+                <div class="flex justify-end space-x-2 mt-8">
                     <button type="button" class="modal-close-btn rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">Cancel</button>
                     <button type="submit" class="rounded-md border border-transparent bg-rose-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-rose-700">Submit Report</button>
                 </div>
@@ -161,13 +165,13 @@
     <!-- Report Found Modal -->
     <div id="foundModal" class="modal fixed inset-0 z-10 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden opacity-0">
         <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-            <h2 class="text-2xl font-bold mb-4 text-emerald-600">Report a Found Watch</h2>
+            <h2 class="text-2xl font-bold mb-8 text-emerald-600">Report a Found Watch</h2>
             <form id="foundForm">
-                <div class="mb-4">
+                <div class="mb-6">
                     <label for="found-serial" class="block text-sm font-medium text-gray-700">Serial Number</label>
                     <input type="text" id="found-serial" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="A1B2C3D4E5F6">
                 </div>
-                 <div class="mb-4">
+                 <div class="mb-6">
                     <label for="found-model" class="block text-sm font-medium text-gray-700">Model</label>
                     <select id="found-model" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                         <option>Series 9</option>
@@ -180,15 +184,16 @@
                         <option>Other</option>
                     </select>
                 </div>
-                <div class="mb-4">
-                    <label for="found-address" class="block text-sm font-medium text-gray-700">Address Found</label>
-                    <input type="text" id="found-address" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="456 River Walk, San Antonio, TX">
-                </div>
                 <div class="mb-6">
                     <label for="found-date" class="block text-sm font-medium text-gray-700">Date Found</label>
                     <input type="date" id="found-date" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                 </div>
-                <div class="flex justify-end space-x-2">
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700">Location Found</label>
+                    <p class="text-xs text-gray-500 mb-2">Click on the map below to drop a pin.</p>
+                    <div id="found-map-picker" class="h-64 w-full rounded-md border border-gray-300"></div>
+                </div>
+                <div class="flex justify-end space-x-2 mt-8">
                     <button type="button" class="modal-close-btn rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">Cancel</button>
                     <button type="submit" class="rounded-md border border-transparent bg-emerald-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-emerald-700">Submit Report</button>
                 </div>
@@ -209,7 +214,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // --- STATE ---
-            let map;
+            let mainMap;
+            let lostPickerMap, foundPickerMap;
+            let selectedCoords = null;
+            let pinMarker = null;
             let user = null; // { email: 'test@test.com' } or null
 
             // --- SELECTORS ---
@@ -218,16 +226,69 @@
             const userEmailDisplay = document.getElementById('user-email-display');
             const modals = document.querySelectorAll('.modal');
 
+            // --- MAP INITIALIZATION ---
+            function initPickerMap(mapId, mapVar) {
+                if (mapVar) {
+                    mapVar.remove();
+                }
+                const newMap = L.map(mapId).setView([29.4241, -98.4936], 12);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(newMap);
+
+                newMap.on('click', function(e) {
+                    selectedCoords = e.latlng;
+                    if (pinMarker) {
+                        pinMarker.setLatLng(e.latlng);
+                    } else {
+                        pinMarker = L.marker(e.latlng).addTo(newMap);
+                    }
+                });
+                return newMap;
+            }
+
             // --- MODAL HANDLING ---
             function openModal(modalId) {
                 const modal = document.getElementById(modalId);
                 modal.classList.remove('hidden');
-                setTimeout(() => modal.classList.remove('opacity-0'), 10);
+                
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    // Initialize or refresh map inside the now-visible modal
+                    if (modalId === 'lostModal') {
+                       if (!lostPickerMap) lostPickerMap = initPickerMap('lost-map-picker');
+                       setTimeout(() => lostPickerMap.invalidateSize(), 10);
+                    }
+                    if (modalId === 'foundModal') {
+                        if (!foundPickerMap) foundPickerMap = initPickerMap('found-map-picker');
+                        setTimeout(() => foundPickerMap.invalidateSize(), 10);
+                    }
+                }, 10);
             }
 
             function closeModal(modal) {
                 modal.classList.add('opacity-0');
-                setTimeout(() => modal.classList.add('hidden'), 250);
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    // Reset pin selection when closing a form modal
+                    if(modal.id === 'lostModal' || modal.id === 'foundModal') {
+                        selectedCoords = null;
+                        if(pinMarker) {
+                            pinMarker.remove();
+                            pinMarker = null;
+                        }
+                        // Destroy map instance to prevent issues
+                        if(lostPickerMap && modal.id === 'lostModal') {
+                            lostPickerMap.remove();
+                            lostPickerMap = null;
+                        }
+                        if(foundPickerMap && modal.id === 'foundModal') {
+                            foundPickerMap.remove();
+                            foundPickerMap = null;
+                        }
+                    }
+                }, 250);
             }
             
             // --- UI UPDATE FUNCTIONS ---
@@ -270,9 +331,9 @@
                     const watches = await response.json();
                     
                     // Clear existing markers
-                    map.eachLayer(layer => {
+                    mainMap.eachLayer(layer => {
                         if (layer instanceof L.Marker) {
-                            map.removeLayer(layer);
+                            mainMap.removeLayer(layer);
                         }
                     });
 
@@ -283,7 +344,7 @@
                         const icon = watch.status === 'lost' ? lostIcon : foundIcon;
                         if (watch.latitude && watch.longitude) {
                             L.marker([watch.latitude, watch.longitude], { icon })
-                                .addTo(map)
+                                .addTo(mainMap)
                                 .bindPopup(`<b>Model:</b> ${watch.model || 'N/A'}<br><b>Status:</b> ${watch.status}<br><b>Date:</b> ${watch.date_reported}`);
                         }
                     });
@@ -295,28 +356,34 @@
             
             // --- FORM SUBMISSION ---
             async function handleReportSubmit(e, status) {
-                 e.preventDefault();
+                e.preventDefault();
                 const form = e.target;
-                const serial = form.querySelector('input[type="text"]').value;
-                const model = form.querySelector('select').value;
-                const address = form.querySelector('input[id*="address"]').value;
-                const date_reported = form.querySelector('input[type="date"]').value;
+                const submitButton = form.querySelector('button[type="submit"]');
 
-                // Simple geocoding placeholder - generates random coordinates near San Antonio
-                 const latitude = 29.4241 + (Math.random() - 0.5) * 0.2;
-                 const longitude = -98.4936 + (Math.random() - 0.5) * 0.2;
+                if (!selectedCoords) {
+                    showResultModal("Location Missing", "Please drop a pin on the map to select the location.");
+                    return;
+                }
 
-                const formData = {
-                    serial_number: serial,
-                    status,
-                    email: user.email,
-                    latitude,
-                    longitude,
-                    date_reported,
-                    model
-                };
+                const originalButtonText = submitButton.textContent;
+                submitButton.disabled = true;
+                submitButton.textContent = 'Submitting...';
 
                 try {
+                    const serial = form.querySelector('input[type="text"]').value;
+                    const model = form.querySelector('select').value;
+                    const date_reported = form.querySelector('input[type="date"]').value;
+
+                    const formData = {
+                        serial_number: serial,
+                        status,
+                        email: user.email,
+                        latitude: selectedCoords.lat,
+                        longitude: selectedCoords.lng,
+                        date_reported,
+                        model
+                    };
+                    
                     const response = await fetch('/api/watches', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -343,6 +410,9 @@
                 } catch (error) {
                     console.error(`Error submitting ${status} report:`, error);
                     showResultModal("Error", `Failed to submit report. ${error.message}`);
+                } finally {
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalButtonText;
                 }
             }
 
@@ -385,12 +455,12 @@
 
             // --- INITIALIZATION ---
             function initialize() {
-                // Initialize map
-                map = L.map('map').setView([29.4241, -98.4936], 12); // Centered on San Antonio
+                // Initialize main map
+                mainMap = L.map('map').setView([29.4241, -98.4936], 12); // Centered on San Antonio
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     maxZoom: 19,
                     attribution: '© OpenStreetMap contributors'
-                }).addTo(map);
+                }).addTo(mainMap);
                 
                 updateUIForLoginStatus();
                 fetchStats();
