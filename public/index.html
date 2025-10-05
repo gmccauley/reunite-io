@@ -7,6 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Add the Auth0 SPA SDK -->
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; }
         .modal { transition: opacity 0.25s ease; }
@@ -23,7 +25,7 @@
                 <div class="flex h-16 justify-between">
                     <div class="flex">
                         <div class="flex flex-shrink-0 items-center">
-                            <svg class="h-8 w-auto text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 L 24 24" stroke-width="1.5" stroke="currentColor">
+                            <svg class="h-8 w-auto text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.792V5.25A2.25 2.25 0 0018.75 3h-13.5A2.25 2.25 0 003 5.25v13.5A2.25 2.25 0 005.25 21h7.5M12 18.75a.75.75 0 000-1.5.75.75 0 000 1.5zM12 12.75a.75.75 0 000-1.5.75.75 0 000 1.5zM12 6.75a.75.75 0 000-1.5.75.75 0 000 1.5zM16.5 13.5a3 3 0 116 0 3 3 0 01-6 0zM21 15.75a.75.75 0 00-1.5 0v.01a.75.75 0 001.5 0v-.01z" />
                             </svg>
                             <span class="ml-2 text-xl font-bold text-gray-800">Reunite.IO</span>
@@ -31,8 +33,7 @@
                     </div>
                     <div class="flex items-center">
                         <div id="logged-out-view" class="flex items-center space-x-2">
-                            <button id="login-btn" class="rounded-md bg-transparent px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">Log in</button>
-                            <button id="register-btn" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-500">Register</button>
+                            <button id="login-btn" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-500">Log in</button>
                         </div>
                         <div id="logged-in-view" class="hidden flex items-center space-x-4">
                              <span id="user-email-display" class="text-sm font-medium text-gray-700"></span>
@@ -81,60 +82,18 @@
     </div>
 
     <!-- Modals -->
-    <!-- Registration Modal -->
-    <div id="registerModal" class="modal fixed inset-0 z-10 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden opacity-0">
-        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-            <h2 class="text-2xl font-bold mb-8">Register an Account</h2>
-            <form id="registerForm">
-                <div class="mb-6">
-                    <label for="reg-email" class="block text-sm font-medium text-gray-700">Email address</label>
-                    <input type="email" id="reg-email" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                </div>
-                <div class="mb-6">
-                    <label for="reg-password" class="block text-sm font-medium text-gray-700">Password</label>
-                    <input type="password" id="reg-password" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                </div>
-                <div class="flex justify-end space-x-2 mt-8">
-                    <button type="button" class="modal-close-btn rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">Cancel</button>
-                    <button type="submit" class="rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">Register</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Login Modal -->
-    <div id="loginModal" class="modal fixed inset-0 z-10 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden opacity-0">
-        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-            <h2 class="text-2xl font-bold mb-8">Log In</h2>
-            <form id="loginForm">
-                <div class="mb-6">
-                    <label for="login-email" class="block text-sm font-medium text-gray-700">Email address</label>
-                    <input type="email" id="login-email" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                </div>
-                <div class="mb-6">
-                    <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
-                    <input type="password" id="login-password" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                </div>
-                <div class="flex justify-end space-x-2 mt-8">
-                    <button type="button" class="modal-close-btn rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">Cancel</button>
-                    <button type="submit" class="rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">Log In</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <!-- Report Lost Modal -->
     <div id="lostModal" class="modal fixed inset-0 z-10 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden opacity-0">
-        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-            <h2 class="text-2xl font-bold mb-8 text-rose-600">Report a Lost Watch</h2>
+        <div class="bg-white rounded-lg shadow-xl p-10 w-full max-w-lg">
+            <h2 class="text-3xl font-bold mb-8 text-rose-600">Report a Lost Watch</h2>
             <form id="lostForm">
-                <div class="mb-6">
-                    <label for="lost-serial" class="block text-sm font-medium text-gray-700">Serial Number</label>
-                    <input type="text" id="lost-serial" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="A1B2C3D4E5F6">
+                <div class="mb-8">
+                    <label for="lost-serial" class="block text-base font-medium text-gray-700">Serial Number</label>
+                    <input type="text" id="lost-serial" required class="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-base bg-gray-50 p-3" placeholder="A1B2C3D4E5F6">
                 </div>
-                <div class="mb-6">
-                    <label for="lost-model" class="block text-sm font-medium text-gray-700">Model</label>
-                    <select id="lost-model" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                <div class="mb-8">
+                    <label for="lost-model" class="block text-base font-medium text-gray-700">Model</label>
+                    <select id="lost-model" required class="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-base bg-gray-50 p-3">
                         <option>Series 9</option>
                         <option>Ultra 2</option>
                         <option>SE (2nd gen)</option>
@@ -145,18 +104,18 @@
                         <option>Other</option>
                     </select>
                 </div>
-                <div class="mb-6">
-                    <label for="lost-date" class="block text-sm font-medium text-gray-700">Date Lost</label>
-                    <input type="date" id="lost-date" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                <div class="mb-8">
+                    <label for="lost-date" class="block text-base font-medium text-gray-700">Date Lost</label>
+                    <input type="date" id="lost-date" required class="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-base bg-gray-50 p-3">
                 </div>
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700">Last Known Location</label>
-                    <p class="text-xs text-gray-500 mb-2">Click on the map below to drop a pin.</p>
+                <div class="mb-8">
+                    <label class="block text-base font-medium text-gray-700">Last Known Location</label>
+                    <p class="text-sm text-gray-500 mt-1 mb-2">Click on the map below to drop a pin.</p>
                     <div id="lost-map-picker" class="h-64 w-full rounded-md border border-gray-300"></div>
                 </div>
-                <div class="flex justify-end space-x-2 mt-8">
-                    <button type="button" class="modal-close-btn rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">Cancel</button>
-                    <button type="submit" class="rounded-md border border-transparent bg-rose-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-rose-700">Submit Report</button>
+                <div class="flex justify-end space-x-4 mt-10">
+                    <button type="button" class="modal-close-btn rounded-md border border-gray-300 bg-white py-2.5 px-5 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50">Cancel</button>
+                    <button type="submit" class="rounded-md border border-transparent bg-rose-600 py-2.5 px-5 text-base font-medium text-white shadow-sm hover:bg-rose-700">Submit Report</button>
                 </div>
             </form>
         </div>
@@ -164,16 +123,16 @@
 
     <!-- Report Found Modal -->
     <div id="foundModal" class="modal fixed inset-0 z-10 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden opacity-0">
-        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-            <h2 class="text-2xl font-bold mb-8 text-emerald-600">Report a Found Watch</h2>
+        <div class="bg-white rounded-lg shadow-xl p-10 w-full max-w-lg">
+            <h2 class="text-3xl font-bold mb-8 text-emerald-600">Report a Found Watch</h2>
             <form id="foundForm">
-                <div class="mb-6">
-                    <label for="found-serial" class="block text-sm font-medium text-gray-700">Serial Number</label>
-                    <input type="text" id="found-serial" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="A1B2C3D4E5F6">
+                <div class="mb-8">
+                    <label for="found-serial" class="block text-base font-medium text-gray-700">Serial Number</label>
+                    <input type="text" id="found-serial" required class="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-base bg-gray-50 p-3" placeholder="A1B2C3D4E5F6">
                 </div>
-                 <div class="mb-6">
-                    <label for="found-model" class="block text-sm font-medium text-gray-700">Model</label>
-                    <select id="found-model" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                 <div class="mb-8">
+                    <label for="found-model" class="block text-base font-medium text-gray-700">Model</label>
+                    <select id="found-model" required class="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-base bg-gray-50 p-3">
                         <option>Series 9</option>
                         <option>Ultra 2</option>
                         <option>SE (2nd gen)</option>
@@ -184,18 +143,18 @@
                         <option>Other</option>
                     </select>
                 </div>
-                <div class="mb-6">
-                    <label for="found-date" class="block text-sm font-medium text-gray-700">Date Found</label>
-                    <input type="date" id="found-date" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                <div class="mb-8">
+                    <label for="found-date" class="block text-base font-medium text-gray-700">Date Found</label>
+                    <input type="date" id="found-date" required class="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-base bg-gray-50 p-3">
                 </div>
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700">Location Found</label>
-                    <p class="text-xs text-gray-500 mb-2">Click on the map below to drop a pin.</p>
+                <div class="mb-8">
+                    <label class="block text-base font-medium text-gray-700">Location Found</label>
+                    <p class="text-sm text-gray-500 mt-1 mb-2">Click on the map below to drop a pin.</p>
                     <div id="found-map-picker" class="h-64 w-full rounded-md border border-gray-300"></div>
                 </div>
-                <div class="flex justify-end space-x-2 mt-8">
-                    <button type="button" class="modal-close-btn rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">Cancel</button>
-                    <button type="submit" class="rounded-md border border-transparent bg-emerald-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-emerald-700">Submit Report</button>
+                <div class="flex justify-end space-x-4 mt-10">
+                    <button type="button" class="modal-close-btn rounded-md border border-gray-300 bg-white py-2.5 px-5 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50">Cancel</button>
+                    <button type="submit" class="rounded-md border border-transparent bg-emerald-600 py-2.5 px-5 text-base font-medium text-white shadow-sm hover:bg-emerald-700">Submit Report</button>
                 </div>
             </form>
         </div>
@@ -203,28 +162,73 @@
     
      <!-- Result Modal -->
     <div id="resultModal" class="modal fixed inset-0 z-20 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden opacity-0">
-        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md text-center">
-            <h2 id="result-title" class="text-2xl font-bold mb-4"></h2>
-            <p id="result-message" class="text-gray-600 mb-6"></p>
-            <button id="result-close-btn" class="rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">Close</button>
+        <div class="bg-white rounded-lg shadow-xl p-10 w-full max-w-lg text-center">
+            <h2 id="result-title" class="text-3xl font-bold mb-6"></h2>
+            <p id="result-message" class="text-lg text-gray-600 mb-8"></p>
+            <button id="result-close-btn" class="rounded-md border border-transparent bg-indigo-600 py-2.5 px-5 text-base font-medium text-white shadow-sm hover:bg-indigo-700">Close</button>
         </div>
     </div>
 
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        // --- IMPORTANT: CONFIGURE AUTH0 ---
+        const AUTH0_DOMAIN = 'dev-eroubrp3lqs7up5c.us.auth0.com'; // <-- Replace with your Auth0 Domain
+        const AUTH0_CLIENT_ID = 'TyhIsvWjDhao9LjXPm1pQnyvxng3T6FW'; // <-- Replace with your Auth0 Client ID
+        const AUTH0_AUDIENCE = 'https://api.reunite.io'; // <-- Replace with your Auth0 API Identifier (Audience)
+
+        document.addEventListener('DOMContentLoaded', async function() {
             // --- STATE ---
             let mainMap;
             let lostPickerMap, foundPickerMap;
             let selectedCoords = null;
             let pinMarker = null;
-            let user = null; // { email: 'test@test.com' } or null
+            let auth0Client = null;
+            let user = null;
 
             // --- SELECTORS ---
             const loggedOutView = document.getElementById('logged-out-view');
             const loggedInView = document.getElementById('logged-in-view');
             const userEmailDisplay = document.getElementById('user-email-display');
             const modals = document.querySelectorAll('.modal');
+            
+            // --- AUTH0 INITIALIZATION & HANDLING ---
+            async function configureClient() {
+                auth0Client = await auth0.createAuth0Client({
+                    domain: AUTH0_DOMAIN,
+                    clientId: AUTH0_CLIENT_ID,
+                    authorizationParams: {
+                        redirect_uri: window.location.origin,
+                        audience: AUTH0_AUDIENCE
+                    },
+                    useRefreshTokens: true,
+                    cacheLocation: 'localstorage'
+                });
+            }
+
+            async function processLogin() {
+                const query = window.location.search;
+                if (query.includes("code=") && query.includes("state=")) {
+                    await auth0Client.handleRedirectCallback();
+                    window.history.replaceState({}, document.title, "/");
+                }
+                await updateUI();
+            }
+            
+            async function updateUI() {
+                const isAuthenticated = await auth0Client.isAuthenticated();
+                if (isAuthenticated) {
+                    user = await auth0Client.getUser();
+                    loggedOutView.classList.add('hidden');
+                    loggedInView.classList.remove('hidden');
+                    userEmailDisplay.textContent = `Welcome, ${user.name || user.email}`;
+                } else {
+                    user = null;
+                    loggedInView.classList.add('hidden');
+                    loggedOutView.classList.remove('hidden');
+                    userEmailDisplay.textContent = '';
+                }
+            }
+
 
             // --- MAP INITIALIZATION ---
             function initPickerMap(mapId, mapVar) {
@@ -251,11 +255,16 @@
             // --- MODAL HANDLING ---
             function openModal(modalId) {
                 const modal = document.getElementById(modalId);
+                
+                if(modalId === 'lostModal' || modalId === 'foundModal') {
+                    const dateInput = modal.querySelector('input[type="date"]');
+                    dateInput.value = new Date().toISOString().split('T')[0];
+                }
+
                 modal.classList.remove('hidden');
                 
                 setTimeout(() => {
                     modal.classList.remove('opacity-0');
-                    // Initialize or refresh map inside the now-visible modal
                     if (modalId === 'lostModal') {
                        if (!lostPickerMap) lostPickerMap = initPickerMap('lost-map-picker');
                        setTimeout(() => lostPickerMap.invalidateSize(), 10);
@@ -271,14 +280,12 @@
                 modal.classList.add('opacity-0');
                 setTimeout(() => {
                     modal.classList.add('hidden');
-                    // Reset pin selection when closing a form modal
                     if(modal.id === 'lostModal' || modal.id === 'foundModal') {
                         selectedCoords = null;
                         if(pinMarker) {
                             pinMarker.remove();
                             pinMarker = null;
                         }
-                        // Destroy map instance to prevent issues
                         if(lostPickerMap && modal.id === 'lostModal') {
                             lostPickerMap.remove();
                             lostPickerMap = null;
@@ -289,19 +296,6 @@
                         }
                     }
                 }, 250);
-            }
-            
-            // --- UI UPDATE FUNCTIONS ---
-            function updateUIForLoginStatus() {
-                if (user) {
-                    loggedOutView.classList.add('hidden');
-                    loggedInView.classList.remove('hidden');
-                    userEmailDisplay.textContent = `Welcome, ${user.email}`;
-                } else {
-                    loggedInView.classList.add('hidden');
-                    loggedOutView.classList.remove('hidden');
-                    userEmailDisplay.textContent = '';
-                }
             }
             
             function showResultModal(title, message) {
@@ -316,9 +310,10 @@
                     const response = await fetch('/api/stats');
                     if (!response.ok) throw new Error('Failed to fetch stats');
                     const stats = await response.json();
-                    document.getElementById('lost-count').textContent = stats.lost;
-                    document.getElementById('found-count').textContent = stats.found;
-                    document.getElementById('reunited-count').textContent = stats.reunited;
+                    // --- FIX: Reverted to use original property names ---
+                    document.getElementById('lost-count').textContent = stats.lost || 0;
+                    document.getElementById('found-count').textContent = stats.found || 0;
+                    document.getElementById('reunited-count').textContent = stats.reunited || 0;
                 } catch (error) {
                     console.error("Error fetching stats:", error);
                 }
@@ -330,7 +325,6 @@
                     if (!response.ok) throw new Error('Failed to fetch watches');
                     const watches = await response.json();
                     
-                    // Clear existing markers
                     mainMap.eachLayer(layer => {
                         if (layer instanceof L.Marker) {
                             mainMap.removeLayer(layer);
@@ -364,12 +358,18 @@
                     showResultModal("Location Missing", "Please drop a pin on the map to select the location.");
                     return;
                 }
+                if (!user) {
+                    showResultModal("Not Logged In", "You must be logged in to submit a report.");
+                    return;
+                }
 
                 const originalButtonText = submitButton.textContent;
                 submitButton.disabled = true;
                 submitButton.textContent = 'Submitting...';
 
                 try {
+                    const accessToken = await auth0Client.getTokenSilently();
+
                     const serial = form.querySelector('input[type="text"]').value;
                     const model = form.querySelector('select').value;
                     const date_reported = form.querySelector('input[type="date"]').value;
@@ -386,7 +386,10 @@
                     
                     const response = await fetch('/api/watches', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${accessToken}`
+                        },
                         body: JSON.stringify(formData)
                     });
                     const result = await response.json();
@@ -403,7 +406,6 @@
                        showResultModal("Report Submitted", result.message);
                     }
                     
-                    // Refresh data on page
                     fetchStats();
                     fetchAndDisplayWatches();
 
@@ -417,14 +419,11 @@
             }
 
             // --- EVENT LISTENERS ---
-            document.getElementById('login-btn').addEventListener('click', () => openModal('loginModal'));
-            document.getElementById('register-btn').addEventListener('click', () => openModal('registerModal'));
+            document.getElementById('login-btn').addEventListener('click', () => auth0Client.loginWithRedirect());
+            document.getElementById('logout-btn').addEventListener('click', () => auth0Client.logout({ logoutParams: { returnTo: window.location.origin } }));
+
             document.getElementById('report-lost-btn').addEventListener('click', () => openModal('lostModal'));
             document.getElementById('report-found-btn').addEventListener('click', () => openModal('foundModal'));
-            document.getElementById('logout-btn').addEventListener('click', () => {
-                user = null;
-                updateUIForLoginStatus();
-            });
             document.getElementById('result-close-btn').addEventListener('click', (e) => closeModal(e.target.closest('.modal')));
             
             modals.forEach(modal => {
@@ -435,34 +434,21 @@
                 });
             });
 
-            // Mock Auth Handlers
-            document.getElementById('loginForm').addEventListener('submit', (e) => {
-                e.preventDefault();
-                user = { email: e.target.querySelector('#login-email').value };
-                closeModal(e.target.closest('.modal'));
-                updateUIForLoginStatus();
-            });
-
-            document.getElementById('registerForm').addEventListener('submit', (e) => {
-                e.preventDefault();
-                user = { email: e.target.querySelector('#reg-email').value };
-                closeModal(e.target.closest('.modal'));
-                updateUIForLoginStatus();
-            });
-
             document.getElementById('lostForm').addEventListener('submit', (e) => handleReportSubmit(e, 'lost'));
             document.getElementById('foundForm').addEventListener('submit', (e) => handleReportSubmit(e, 'found'));
 
             // --- INITIALIZATION ---
-            function initialize() {
+            async function initialize() {
                 // Initialize main map
-                mainMap = L.map('map').setView([29.4241, -98.4936], 12); // Centered on San Antonio
+                mainMap = L.map('map').setView([29.4241, -98.4936], 12);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     maxZoom: 19,
                     attribution: '© OpenStreetMap contributors'
                 }).addTo(mainMap);
                 
-                updateUIForLoginStatus();
+                await configureClient();
+                await processLogin();
+                
                 fetchStats();
                 fetchAndDisplayWatches();
             }
