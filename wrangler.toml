@@ -2,7 +2,7 @@
 # It defines the worker and the pages project settings.
 
 # Name of your worker.
-name = "watch-api"
+name = "reunite-io"
 # The entry point for your worker.
 main = "src/worker.js"
 
@@ -18,7 +18,5 @@ upload_dir = "public"
 # The `binding` name must match the variable name used in your worker code (env.DB).
 [[d1_databases]]
 binding = "DB"
-database_name = "lost-and-found-db"
-# IMPORTANT: Replace this with the ID you get after running `wrangler d1 create lost-and-found-db`
-database_id = ""
-
+database_name = "reunite-db"
+database_id = "456edd48-d166-4845-87b9-c0195d4bce7c"
