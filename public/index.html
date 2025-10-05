@@ -1,349 +1,403 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full bg-gray-50">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reunite.IO - Lost & Found Apple Watch</title>
+    <title>Reunite.IO - Lost & Found Apple Watch Service</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .modal { display: none; }
-        .modal.active { display: flex; }
+        .modal { transition: opacity 0.25s ease; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
-
-    <!-- App Container -->
-    <div class="min-h-screen">
-        <!-- Header -->
-        <header class="bg-white shadow-sm">
-            <nav class="container mx-auto px-4 lg:px-6 py-4 flex justify-between items-center">
-                <a href="#" class="text-2xl font-bold text-indigo-600">Reunite.IO</a>
-                <!-- Logged Out State -->
-                <div id="logged-out-nav" class="space-x-2">
-                    <button onclick="openModal('loginModal')" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-indigo-600">Log In</button>
-                    <button onclick="openModal('registerModal')" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700">Register</button>
+<body class="h-full">
+    <div class="min-h-full">
+        <!-- Navigation -->
+        <nav class="bg-white shadow-sm">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="flex h-16 justify-between">
+                    <div class="flex">
+                        <div class="flex flex-shrink-0 items-center">
+                            <svg class="h-8 w-auto text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.792V5.25A2.25 2.25 0 0018.75 3h-13.5A2.25 2.25 0 003 5.25v13.5A2.25 2.25 0 005.25 21h7.5M12 18.75a.75.75 0 000-1.5.75.75 0 000 1.5zM12 12.75a.75.75 0 000-1.5.75.75 0 000 1.5zM12 6.75a.75.75 0 000-1.5.75.75 0 000 1.5zM16.5 13.5a3 3 0 116 0 3 3 0 01-6 0zM21 15.75a.75.75 0 00-1.5 0v.01a.75.75 0 001.5 0v-.01z" />
+                            </svg>
+                            <span class="ml-2 text-xl font-bold text-gray-800">Reunite.IO</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <div id="logged-out-view" class="flex items-center space-x-2">
+                            <button id="login-btn" class="rounded-md bg-transparent px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">Log in</button>
+                            <button id="register-btn" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-500">Register</button>
+                        </div>
+                        <div id="logged-in-view" class="hidden flex items-center space-x-4">
+                             <span id="user-email-display" class="text-sm font-medium text-gray-700"></span>
+                            <button id="report-lost-btn" class="rounded-md bg-rose-600 px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-rose-500">Report Lost Watch</button>
+                            <button id="report-found-btn" class="rounded-md bg-emerald-600 px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-500">Report Found Watch</button>
+                            <button id="logout-btn" class="rounded-md bg-gray-200 px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-300">Log out</button>
+                        </div>
+                    </div>
                 </div>
-                <!-- Logged In State -->
-                <div id="logged-in-nav" class="hidden items-center space-x-4">
-                    <span id="user-greeting" class="text-sm font-medium">Welcome, User!</span>
-                    <button onclick="openModal('foundModal')" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700">Report Found Watch</button>
-                    <button onclick="openModal('lostModal')" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700">Report Lost Watch</button>
-                    <button onclick="logout()" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-indigo-600">Log Out</button>
-                </div>
-            </nav>
-        </header>
+            </div>
+        </nav>
 
         <!-- Main Content -->
-        <main class="container mx-auto px-4 lg:px-6 py-8">
-            <!-- Hero Section -->
-            <section class="text-center my-12">
-                <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900">Lost your Apple Watch?</h1>
-                <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">Our community helps reunite owners with their lost devices. Report a found watch or check if yours has been located.</p>
-            </section>
+        <main class="py-10">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <!-- Hero Section -->
+                <div class="text-center mb-12">
+                    <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">Lost your Apple Watch?</h1>
+                    <p class="mt-6 text-lg leading-8 text-gray-600">Our community helps reunite owners with their lost devices. Report a lost or found watch to get started.</p>
+                </div>
 
-            <!-- Stats Section -->
-            <section class="grid grid-cols-1 md:grid-cols-3 gap-6 my-12">
-                <div class="bg-white p-6 rounded-lg shadow text-center">
-                    <h3 class="text-4xl font-bold text-red-500" id="lost-count">...</h3>
-                    <p class="mt-2 text-sm font-medium text-gray-500">Active Lost Reports</p>
+                <!-- Stats Section -->
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-12">
+                    <div class="overflow-hidden rounded-lg bg-white shadow p-5 text-center">
+                        <dt class="truncate text-sm font-medium text-gray-500">Active Lost Reports</dt>
+                        <dd id="lost-count" class="mt-1 text-3xl font-semibold tracking-tight text-rose-600">N/A</dd>
+                    </div>
+                    <div class="overflow-hidden rounded-lg bg-white shadow p-5 text-center">
+                        <dt class="truncate text-sm font-medium text-gray-500">Active Found Reports</dt>
+                        <dd id="found-count" class="mt-1 text-3xl font-semibold tracking-tight text-emerald-600">N/A</dd>
+                    </div>
+                    <div class="overflow-hidden rounded-lg bg-white shadow p-5 text-center">
+                        <dt class="truncate text-sm font-medium text-gray-500">Successful Reunions</dt>
+                        <dd id="reunited-count" class="mt-1 text-3xl font-semibold tracking-tight text-indigo-600">N/A</dd>
+                    </div>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow text-center">
-                    <h3 class="text-4xl font-bold text-green-500" id="found-count">...</h3>
-                    <p class="mt-2 text-sm font-medium text-gray-500">Found Watches Logged</p>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow text-center">
-                    <h3 class="text-4xl font-bold text-indigo-500" id="reunited-count">...</h3>
-                    <p class="mt-2 text-sm font-medium text-gray-500">Successfully Reunited</p>
-                </div>
-            </section>
 
-            <!-- Map Section -->
-            <section class="bg-white p-4 sm:p-6 rounded-lg shadow my-12 relative z-0">
-                <h2 class="text-2xl font-bold mb-4 text-center">Lost & Found Hotspots</h2>
-                <div id="map" class="h-96 w-full rounded-md"></div>
-            </section>
+                <!-- Map Section -->
+                <div class="bg-white shadow rounded-lg p-4 relative z-0">
+                    <h2 class="text-lg font-medium text-gray-900 mb-4">Lost & Found Hotspots</h2>
+                    <div id="map" class="h-[700px] rounded-md"></div>
+                </div>
+
+            </div>
         </main>
     </div>
 
     <!-- Modals -->
+    <!-- Registration Modal -->
+    <div id="registerModal" class="modal fixed inset-0 z-10 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden opacity-0">
+        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-4">Register an Account</h2>
+            <form id="registerForm">
+                <div class="mb-4">
+                    <label for="reg-email" class="block text-sm font-medium text-gray-700">Email address</label>
+                    <input type="email" id="reg-email" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                </div>
+                <div class="mb-6">
+                    <label for="reg-password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="reg-password" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" class="modal-close-btn rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">Cancel</button>
+                    <button type="submit" class="rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Login Modal -->
-    <div id="loginModal" class="modal fixed inset-0 bg-gray-900 bg-opacity-75 items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative">
-            <button onclick="closeModal('loginModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">&times;</button>
-            <h3 class="text-xl font-semibold mb-4">Log In</h3>
-            <form id="loginForm" class="space-y-4">
-                <div>
-                    <label for="loginEmail" class="block text-sm font-medium text-gray-700">Email Address</label>
-                    <input type="email" id="loginEmail" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+    <div id="loginModal" class="modal fixed inset-0 z-10 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden opacity-0">
+        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-4">Log In</h2>
+            <form id="loginForm">
+                <div class="mb-4">
+                    <label for="login-email" class="block text-sm font-medium text-gray-700">Email address</label>
+                    <input type="email" id="login-email" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                 </div>
-                <div>
-                    <label for="loginPassword" class="block text-sm font-medium text-gray-700">Password</label>
-                    <input type="password" id="loginPassword" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                <div class="mb-6">
+                    <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="login-password" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                 </div>
-                <button type="submit" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700">Log In</button>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" class="modal-close-btn rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">Cancel</button>
+                    <button type="submit" class="rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">Log In</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Report Lost Modal -->
+    <div id="lostModal" class="modal fixed inset-0 z-10 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden opacity-0">
+        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-4 text-rose-600">Report a Lost Watch</h2>
+            <form id="lostForm">
+                <div class="mb-4">
+                    <label for="lost-serial" class="block text-sm font-medium text-gray-700">Serial Number</label>
+                    <input type="text" id="lost-serial" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="A1B2C3D4E5F6">
+                </div>
+                <div class="mb-4">
+                    <label for="lost-model" class="block text-sm font-medium text-gray-700">Model</label>
+                    <select id="lost-model" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        <option>Series 9</option>
+                        <option>Ultra 2</option>
+                        <option>SE (2nd gen)</option>
+                        <option>Series 8</option>
+                        <option>Ultra</option>
+                        <option>SE (1st gen)</option>
+                        <option>Series 7</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="lost-address" class="block text-sm font-medium text-gray-700">Last Known Address</label>
+                    <input type="text" id="lost-address" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="123 Main St, San Antonio, TX">
+                </div>
+                <div class="mb-6">
+                    <label for="lost-date" class="block text-sm font-medium text-gray-700">Date Lost</label>
+                    <input type="date" id="lost-date" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" class="modal-close-btn rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">Cancel</button>
+                    <button type="submit" class="rounded-md border border-transparent bg-rose-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-rose-700">Submit Report</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Report Found Modal -->
+    <div id="foundModal" class="modal fixed inset-0 z-10 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden opacity-0">
+        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-4 text-emerald-600">Report a Found Watch</h2>
+            <form id="foundForm">
+                <div class="mb-4">
+                    <label for="found-serial" class="block text-sm font-medium text-gray-700">Serial Number</label>
+                    <input type="text" id="found-serial" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="A1B2C3D4E5F6">
+                </div>
+                 <div class="mb-4">
+                    <label for="found-model" class="block text-sm font-medium text-gray-700">Model</label>
+                    <select id="found-model" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        <option>Series 9</option>
+                        <option>Ultra 2</option>
+                        <option>SE (2nd gen)</option>
+                        <option>Series 8</option>
+                        <option>Ultra</option>
+                        <option>SE (1st gen)</option>
+                        <option>Series 7</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="found-address" class="block text-sm font-medium text-gray-700">Address Found</label>
+                    <input type="text" id="found-address" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="456 River Walk, San Antonio, TX">
+                </div>
+                <div class="mb-6">
+                    <label for="found-date" class="block text-sm font-medium text-gray-700">Date Found</label>
+                    <input type="date" id="found-date" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" class="modal-close-btn rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">Cancel</button>
+                    <button type="submit" class="rounded-md border border-transparent bg-emerald-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-emerald-700">Submit Report</button>
+                </div>
             </form>
         </div>
     </div>
     
-    <!-- Register Modal -->
-    <div id="registerModal" class="modal fixed inset-0 bg-gray-900 bg-opacity-75 items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative">
-            <button onclick="closeModal('registerModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">&times;</button>
-            <h3 class="text-xl font-semibold mb-4">Create Account</h3>
-            <form id="registerForm" class="space-y-4">
-                <div>
-                    <label for="registerName" class="block text-sm font-medium text-gray-700">Full Name</label>
-                    <input type="text" id="registerName" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                </div>
-                <div>
-                    <label for="registerEmail" class="block text-sm font-medium text-gray-700">Email Address</label>
-                    <input type="email" id="registerEmail" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                </div>
-                <div>
-                    <label for="registerPassword" class="block text-sm font-medium text-gray-700">Password</label>
-                    <input type="password" id="registerPassword" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                </div>
-                <button type="submit" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700">Register</button>
-            </form>
+     <!-- Result Modal -->
+    <div id="resultModal" class="modal fixed inset-0 z-20 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden opacity-0">
+        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md text-center">
+            <h2 id="result-title" class="text-2xl font-bold mb-4"></h2>
+            <p id="result-message" class="text-gray-600 mb-6"></p>
+            <button id="result-close-btn" class="rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">Close</button>
         </div>
     </div>
-    
-    <!-- Report Found Watch Modal -->
-    <div id="foundModal" class="modal fixed inset-0 bg-gray-900 bg-opacity-75 items-center justify-center p-4 z-50 overflow-y-auto">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 relative my-8">
-            <button onclick="closeModal('foundModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">&times;</button>
-            <h3 class="text-xl font-semibold mb-4">Report a Found Apple Watch</h3>
-            <form id="foundForm" class="space-y-4">
-                <div>
-                    <label for="foundSerial" class="block text-sm font-medium text-gray-700">Serial Number</label>
-                    <input type="text" id="foundSerial" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Find on the back of the watch">
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="foundModel" class="block text-sm font-medium text-gray-700">Model</label>
-                        <select id="foundModel" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                            <option>Series 9</option>
-                            <option>Ultra 2</option>
-                            <option>SE</option>
-                            <option>Other</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="foundColor" class="block text-sm font-medium text-gray-700">Color</label>
-                        <input type="text" id="foundColor" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="e.g., Midnight, Starlight">
-                    </div>
-                </div>
-                 <div>
-                    <label for="foundAddress" class="block text-sm font-medium text-gray-700">Address / Cross Streets Where Found</label>
-                    <input type="text" id="foundAddress" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="123 Main St">
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label for="foundCity" class="block text-sm font-medium text-gray-700">City</label>
-                        <input type="text" id="foundCity" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="San Antonio">
-                    </div>
-                    <div>
-                        <label for="foundState" class="block text-sm font-medium text-gray-700">State</label>
-                        <input type="text" id="foundState" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="TX">
-                    </div>
-                    <div>
-                        <label for="foundZip" class="block text-sm font-medium text-gray-700">Zip Code</label>
-                        <input type="text" id="foundZip" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="78205">
-                    </div>
-                </div>
-                <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700">Submit Found Report</button>
-            </form>
-        </div>
-    </div>
-    
-    <!-- Report Lost Watch Modal -->
-    <div id="lostModal" class="modal fixed inset-0 bg-gray-900 bg-opacity-75 items-center justify-center p-4 z-50 overflow-y-auto">
-         <div class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 relative my-8">
-            <button onclick="closeModal('lostModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">&times;</button>
-            <h3 class="text-xl font-semibold mb-4">Report a Lost Apple Watch</h3>
-            <form id="lostForm" class="space-y-4">
-                 <div>
-                    <label for="lostSerial" class="block text-sm font-medium text-gray-700">Serial Number</label>
-                    <input type="text" id="lostSerial" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Check your Apple ID account or original box">
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="lostModel" class="block text-sm font-medium text-gray-700">Model</label>
-                         <select id="lostModel" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                            <option>Series 9</option>
-                            <option>Ultra 2</option>
-                            <option>SE</option>
-                            <option>Other</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="lostColor" class="block text-sm font-medium text-gray-700">Color</label>
-                        <input type="text" id="lostColor" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="e.g., Midnight, Starlight">
-                    </div>
-                </div>
-                 <div>
-                    <label for="lostAddress" class="block text-sm font-medium text-gray-700">Last Known Address / Area</label>
-                    <input type="text" id="lostAddress" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="123 Main St">
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label for="lostCity" class="block text-sm font-medium text-gray-700">City</label>
-                        <input type="text" id="lostCity" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="San Antonio">
-                    </div>
-                    <div>
-                        <label for="lostState" class="block text-sm font-medium text-gray-700">State</label>
-                        <input type="text" id="lostState" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="TX">
-                    </div>
-                    <div>
-                        <label for="lostZip" class="block text-sm font-medium text-gray-700">Zip Code</label>
-                        <input type="text" id="lostZip" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="78205">
-                    </div>
-                </div>
-                <button type="submit" class="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">Submit Lost Report</button>
-            </form>
-        </div>
-    </div>
-    
+
+
     <script>
-        // --- State Management ---
-        let isLoggedIn = false;
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- STATE ---
+            let map;
+            let user = null; // { email: 'test@test.com' } or null
 
-        // --- UI Functions ---
-        const openModal = (modalId) => document.getElementById(modalId).classList.add('active');
-        const closeModal = (modalId) => document.getElementById(modalId).classList.remove('active');
+            // --- SELECTORS ---
+            const loggedOutView = document.getElementById('logged-out-view');
+            const loggedInView = document.getElementById('logged-in-view');
+            const userEmailDisplay = document.getElementById('user-email-display');
+            const modals = document.querySelectorAll('.modal');
 
-        const updateNav = () => {
-            if (isLoggedIn) {
-                document.getElementById('logged-out-nav').classList.add('hidden');
-                document.getElementById('logged-in-nav').classList.remove('hidden');
-            } else {
-                document.getElementById('logged-out-nav').classList.remove('hidden');
-                document.getElementById('logged-in-nav').classList.add('hidden');
+            // --- MODAL HANDLING ---
+            function openModal(modalId) {
+                const modal = document.getElementById(modalId);
+                modal.classList.remove('hidden');
+                setTimeout(() => modal.classList.remove('opacity-0'), 10);
             }
-        };
 
-        const login = () => {
-            isLoggedIn = true;
-            updateNav();
-            closeModal('loginModal');
-            closeModal('registerModal');
-        };
-
-        const logout = () => {
-            isLoggedIn = false;
-            updateNav();
-        };
-
-        // --- Map & Stats Loading ---
-        const loadMap = async () => {
-            const map = L.map('map').setView([29.4241, -98.4936], 10); // Center on San Antonio, TX
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
+            function closeModal(modal) {
+                modal.classList.add('opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 250);
+            }
             
-            try {
-                const response = await fetch('/api/watches');
-                if (!response.ok) throw new Error('Failed to fetch watch locations');
-                
-                const watches = await response.json();
-                
-                const lostIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
-                const foundIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
+            // --- UI UPDATE FUNCTIONS ---
+            function updateUIForLoginStatus() {
+                if (user) {
+                    loggedOutView.classList.add('hidden');
+                    loggedInView.classList.remove('hidden');
+                    userEmailDisplay.textContent = `Welcome, ${user.email}`;
+                } else {
+                    loggedInView.classList.add('hidden');
+                    loggedOutView.classList.remove('hidden');
+                    userEmailDisplay.textContent = '';
+                }
+            }
+            
+            function showResultModal(title, message) {
+                document.getElementById('result-title').textContent = title;
+                document.getElementById('result-message').textContent = message;
+                openModal('resultModal');
+            }
+            
+            // --- DATA FETCHING ---
+            async function fetchStats() {
+                try {
+                    const response = await fetch('/api/stats');
+                    if (!response.ok) throw new Error('Failed to fetch stats');
+                    const stats = await response.json();
+                    document.getElementById('lost-count').textContent = stats.lost;
+                    document.getElementById('found-count').textContent = stats.found;
+                    document.getElementById('reunited-count').textContent = stats.reunited;
+                } catch (error) {
+                    console.error("Error fetching stats:", error);
+                }
+            }
 
-                watches.forEach(watch => {
-                    if (watch.latitude && watch.longitude) {
+            async function fetchAndDisplayWatches() {
+                 try {
+                    const response = await fetch('/api/watches');
+                    if (!response.ok) throw new Error('Failed to fetch watches');
+                    const watches = await response.json();
+                    
+                    // Clear existing markers
+                    map.eachLayer(layer => {
+                        if (layer instanceof L.Marker) {
+                            map.removeLayer(layer);
+                        }
+                    });
+
+                    const lostIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
+                    const foundIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
+
+                    watches.forEach(watch => {
                         const icon = watch.status === 'lost' ? lostIcon : foundIcon;
-                        L.marker([watch.latitude, watch.longitude], { icon })
-                         .addTo(map)
-                         .bindPopup(`<b>Apple Watch ${watch.model}</b><br>Status: ${watch.status}<br>Reported: ${new Date(watch.reported_at).toLocaleDateString()}`);
+                        if (watch.latitude && watch.longitude) {
+                            L.marker([watch.latitude, watch.longitude], { icon })
+                                .addTo(map)
+                                .bindPopup(`<b>Model:</b> ${watch.model || 'N/A'}<br><b>Status:</b> ${watch.status}<br><b>Date:</b> ${watch.date_reported}`);
+                        }
+                    });
+
+                } catch (error) {
+                    console.error("Error fetching watch locations:", error);
+                }
+            }
+            
+            // --- FORM SUBMISSION ---
+            async function handleReportSubmit(e, status) {
+                 e.preventDefault();
+                const form = e.target;
+                const serial = form.querySelector('input[type="text"]').value;
+                const model = form.querySelector('select').value;
+                const address = form.querySelector('input[id*="address"]').value;
+                const date_reported = form.querySelector('input[type="date"]').value;
+
+                // Simple geocoding placeholder - generates random coordinates near San Antonio
+                 const latitude = 29.4241 + (Math.random() - 0.5) * 0.2;
+                 const longitude = -98.4936 + (Math.random() - 0.5) * 0.2;
+
+                const formData = {
+                    serial_number: serial,
+                    status,
+                    email: user.email,
+                    latitude,
+                    longitude,
+                    date_reported,
+                    model
+                };
+
+                try {
+                    const response = await fetch('/api/watches', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+                    const result = await response.json();
+                    
+                    if (!response.ok) {
+                        throw new Error(result.error || 'Submission failed');
+                    }
+                    
+                    closeModal(form.closest('.modal'));
+
+                    if(result.match) {
+                       showResultModal("It's a Match!", result.message);
+                    } else {
+                       showResultModal("Report Submitted", result.message);
+                    }
+                    
+                    // Refresh data on page
+                    fetchStats();
+                    fetchAndDisplayWatches();
+
+                } catch (error) {
+                    console.error(`Error submitting ${status} report:`, error);
+                    showResultModal("Error", `Failed to submit report. ${error.message}`);
+                }
+            }
+
+            // --- EVENT LISTENERS ---
+            document.getElementById('login-btn').addEventListener('click', () => openModal('loginModal'));
+            document.getElementById('register-btn').addEventListener('click', () => openModal('registerModal'));
+            document.getElementById('report-lost-btn').addEventListener('click', () => openModal('lostModal'));
+            document.getElementById('report-found-btn').addEventListener('click', () => openModal('foundModal'));
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                user = null;
+                updateUIForLoginStatus();
+            });
+            document.getElementById('result-close-btn').addEventListener('click', (e) => closeModal(e.target.closest('.modal')));
+            
+            modals.forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal || e.target.classList.contains('modal-close-btn')) {
+                        closeModal(modal);
                     }
                 });
-            } catch (error) {
-                console.error("Error loading map data:", error);
-            }
-        };
+            });
 
-        const loadStats = async () => {
-            try {
-                const response = await fetch('/api/stats');
-                if (!response.ok) throw new Error('Failed to fetch stats');
-                const stats = await response.json();
-
-                document.getElementById('lost-count').innerText = stats.lost || 0;
-                document.getElementById('found-count').innerText = stats.found || 0;
-                document.getElementById('reunited-count').innerText = stats.reunited || 0;
-
-            } catch(error) {
-                console.error("Error loading stats:", error);
-                document.getElementById('lost-count').innerText = 'N/A';
-                document.getElementById('found-count').innerText = 'N/A';
-                document.getElementById('reunited-count').innerText = 'N/A';
-            }
-        };
-
-        // --- Form Handlers ---
-        const handleReportSubmit = async (event, status) => {
-            event.preventDefault();
-            
-            const serialNumber = document.getElementById(`${status}Serial`).value;
-            const model = document.getElementById(`${status}Model`).value;
-            const color = document.getElementById(`${status}Color`).value;
-
-            if (!serialNumber || !model || !color) {
-                alert('Please fill out all watch details.');
-                return;
-            }
-
-            // In a real app, you would use a geocoding service to convert the address to lat/lng.
-            // For now, we'll generate random coordinates near San Antonio for demonstration.
-            const latitude = 29.4241 + (Math.random() - 0.5) * 0.2;
-            const longitude = -98.4936 + (Math.random() - 0.5) * 0.2;
-
-            const watchData = { serial_number: serialNumber, model, color, status, latitude, longitude };
-
-            try {
-                const response = await fetch('/api/watches', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(watchData)
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to submit report.');
-                }
-
-                alert(`Thank you! Your ${status} watch report has been submitted.`);
-                closeModal(`${status}Modal`);
-                location.reload(); // Refresh to update the map and stats
-            } catch (error) {
-                console.error(`Error submitting ${status} report:`, error);
-                alert(`There was an error submitting your report. Please try again.`);
-            }
-        };
-
-
-        // --- Event Listeners ---
-        document.addEventListener('DOMContentLoaded', () => {
-            updateNav();
-            loadMap();
-            loadStats();
-
+            // Mock Auth Handlers
             document.getElementById('loginForm').addEventListener('submit', (e) => {
                 e.preventDefault();
-                // Placeholder for real authentication
-                login();
+                user = { email: e.target.querySelector('#login-email').value };
+                closeModal(e.target.closest('.modal'));
+                updateUIForLoginStatus();
             });
+
             document.getElementById('registerForm').addEventListener('submit', (e) => {
                 e.preventDefault();
-                // Placeholder for real registration
-                login();
+                user = { email: e.target.querySelector('#reg-email').value };
+                closeModal(e.target.closest('.modal'));
+                updateUIForLoginStatus();
             });
-            document.getElementById('foundForm').addEventListener('submit', (e) => handleReportSubmit(e, 'found'));
+
             document.getElementById('lostForm').addEventListener('submit', (e) => handleReportSubmit(e, 'lost'));
+            document.getElementById('foundForm').addEventListener('submit', (e) => handleReportSubmit(e, 'found'));
+
+            // --- INITIALIZATION ---
+            function initialize() {
+                // Initialize map
+                map = L.map('map').setView([29.4241, -98.4936], 12); // Centered on San Antonio
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+                
+                updateUIForLoginStatus();
+                fetchStats();
+                fetchAndDisplayWatches();
+            }
+
+            initialize();
         });
     </script>
 </body>
